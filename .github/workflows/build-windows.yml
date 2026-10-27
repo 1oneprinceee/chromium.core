@@ -1,0 +1,31 @@
+﻿name: Build ChromiumAir (Windows x64)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-2022
+    timeout-minutes: 360
+
+    env:
+      DEPOT_TOOLS_WIN_TOOLCHAIN: '0'
+      PYTHONIOENCODING: 'utf-8'
+      CHROMIUM_VERSION: '155.0.8059.39'
+
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y python3 ninja-build pkg-config libglib2.0-dev
+          python3 utils/patches.py apply patches/series_custom
+          python3 utils/prune_binaries.py pruning.list
+          python3 utils/domain_substitution.py -i domain_substitution.list -r .
+          gn gen out/Default --args="chrome_pgo_phase=0 clang_use_chrome_plugins=false disable_fieldtrial_testing_config=true enable_hangout_services_extension=false enable_mdns=false enable_remoting=false enable_reporting=false enable_service_discovery=false enable_widevine=true exclude_unwind_tables=true google_api_key="" google_default_client_id="" google_default_client_secret="" safe_browsing_mode=0 treat_warnings_as_errors=false use_official_google_api_keys=false use_unofficial_version_number=false v8_drumbrake_bounds_checks=true"
+          ninja -C out/Default chrome
