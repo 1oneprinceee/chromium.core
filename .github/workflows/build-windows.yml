@@ -1,4 +1,4 @@
-name: Build ChromiumAir (Windows x64)
+﻿name: Build ChromiumAir (Windows x64)
 
 on:
   workflow_dispatch:
@@ -37,7 +37,7 @@ jobs:
         shell: pwsh
         run: |
           python utils/prune_binaries.py chromium_src pruning.list
-          python utils/patches.py apply chromium_src patches --ignore-whitespace
+          python utils/patches.py apply chromium_src patches
       - name: Configure and Build
         shell: pwsh
         run: |
