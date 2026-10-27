@@ -1,4 +1,4 @@
-﻿name: Build ChromiumAir (Windows x64)
+name: Build ChromiumAir (Windows x64)
 
 on:
   workflow_dispatch:
